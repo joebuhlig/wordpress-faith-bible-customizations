@@ -5,7 +5,7 @@
 /*
 Plugin Name: Faith Bible Customizations
 Plugin URI: https://github.com/joebuhlig/faith-bible-customizations
-Version: 0.1
+Version: 0.2
 Author: Joe Buhlig
 Author URI: http://joebuhlig.com
 GitHub Plugin URI: https://github.com/joebuhlig/faith-bible-customizations
@@ -136,4 +136,92 @@ class Home_Title_Widget extends WP_Widget {
     return $instance;
   }
 } // class My_Widget
+
+
+// XXXXXXXXXX Homepage Tiles Widget
+function fbc_load_tile_widget() {
+    register_widget( 'fbc_homepage_tile_widget' );
+}
+add_action( 'widgets_init', 'fbc_load_tile_widget' );
+ 
+// Creating the widget 
+class fbc_homepage_tile_widget extends WP_Widget {
+ 
+function __construct() {
+parent::__construct(
+ 
+// Base ID of your widget
+'fbc_homepage_tile_widget', 
+ 
+// Widget name will appear in UI
+__('Homepage Tile Widget', 'fbc_homepage_tile_widget_domain'), 
+ 
+// Widget description
+array( 'description' => __( 'Widget for displaying tiles.', 'fbc_homepage_tile_widget_domain' ), ) 
+);
+}
+ 
+// Creating widget front-end
+ 
+public function widget( $args, $instance ) {
+$text = apply_filters( 'widget_text', $instance[ 'text' ] );
+$url = apply_filters( 'widget_url', $instance[ 'url' ] );
+$image = apply_filters( 'widget_image', $instance[ 'image' ] );
+ 
+// before and after widget arguments are defined by themes
+echo $args['before_widget'];
+ 
+// This is where you run the code and display the output
+echo __( '<div class="homepage-tile"><a href="' . $url . '"><img src="' . $image . '" /><span>' . $text . '</span></a></div>', 'fbc_homepage_tile_widget_domain' );
+echo $args['after_widget'];
+}
+         
+// Widget Backend 
+public function form( $instance ) {
+if ( isset( $instance[ 'text' ] ) ) {
+$text = $instance[ 'text' ];
+}
+else {
+$text = __( '', 'fbc_homepage_tile_widget_domain' );
+}
+
+if ( isset( $instance[ 'url' ] ) ) {
+$url = $instance[ 'url' ];
+}
+else {
+$url = __( '/', 'fbc_homepage_tile_widget_domain' );
+}
+
+if ( isset( $instance[ 'image' ] ) ) {
+$image = $instance[ 'image' ];
+}
+else {
+$image = __( '', 'fbc_homepage_tile_widget_domain' );
+}
+// Widget admin form
+?>
+<p>
+<label for="<?php echo $this->get_field_id( 'text' ); ?>"><?php _e( 'Title:' ); ?></label> 
+<input class="widefat" id="<?php echo $this->get_field_id( 'text' ); ?>" name="<?php echo $this->get_field_name( 'text' ); ?>" type="text" value="<?php echo esc_attr( $text ); ?>" />
+</p>
+<p>
+<label for="<?php echo $this->get_field_id( 'url' ); ?>"><?php _e( 'URL:' ); ?></label> 
+<input class="widefat" id="<?php echo $this->get_field_id( 'url' ); ?>" name="<?php echo $this->get_field_name( 'url' ); ?>" type="text" value="<?php echo esc_attr( $url ); ?>" />
+</p>
+<p>
+<label for="<?php echo $this->get_field_id( 'image' ); ?>"><?php _e( 'Image:' ); ?></label> 
+<input class="widefat" id="<?php echo $this->get_field_id( 'image' ); ?>" name="<?php echo $this->get_field_name( 'image' ); ?>" type="text" value="<?php echo esc_attr( $image ); ?>" />
+</p>
+<?php 
+}
+     
+// Updating widget replacing old instances with new
+public function update( $new_instance, $old_instance ) {
+$instance = array();
+$instance[ 'text' ] = ( ! empty( $new_instance['text'] ) ) ? strip_tags( $new_instance[ 'text' ] ) : '';
+$instance[ 'url' ] = ( ! empty( $new_instance['url'] ) ) ? strip_tags( $new_instance[ 'url' ] ) : '';
+$instance[ 'image' ] = ( ! empty( $new_instance['image'] ) ) ? strip_tags( $new_instance[ 'image' ] ) : '';
+return $instance;
+}
+} // Class fbc_homepage_tile_widget ends here
 ?>
